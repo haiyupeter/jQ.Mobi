@@ -8,14 +8,9 @@
 <META HTTP-EQUIV="Pragma" CONTENT="no-cache">
 
 
-<link rel="stylesheet" type="text/css" href="kitchensink/jq.ui.css" title="default"/>
 <link rel="stylesheet" type="text/css" href="kitchensink/icons.css" /> 
 
-<link rel="stylesheet"  type="text/css" href="kitchensink/jq.ui.carbon.css" title="carbon" disabled='true'/>
-<link rel="stylesheet"  type="text/css" href="kitchensink/jq.ui.eco.css" title="eco" disabled='true' />
-<link rel="stylesheet"  type="text/css" href="kitchensink/jq.ui.frosty.css" title="frosty" disabled='true'/>
-<link rel="stylesheet"  type="text/css" href="kitchensink/jq.ui.slate.css" title="slate" disabled='true'/>
-<link rel="stylesheet"  type="text/css" href="kitchensink/jq.ui.volcano.css" title="volcano" disabled='true' />
+<link rel="stylesheet" type="text/css" href="kitchensink/jq.ui.less.css" title="default"/>
 
 <style>
 	.scrollBar{background:white;}
@@ -40,14 +35,15 @@
         color:red;
     }
 	.jqmscrollBar {background:white !important;}	
-	
 </style>
 <!-- uncomment for AppMobi apps
 <script type="text/javascript" charset="utf-8" src="http://localhost:58888/_appMobi/appmobi.js"></script> 
 <script type="text/javascript" charset="utf-8" src="http://localhost:58888/_appMobi/xhr.js"></script> 	
 -->
+
+
 <script type="text/javascript" charset="utf-8" src="./jq.mobi.js"></script> 
-<!-- include touch.js on desktop browsers only -->
+<!-- include jq.desktopBrowsers.js on desktop browsers only -->
 <script>
 function loadedPanel(what){
     //We are going to set the badge as the number of li elements inside the target
@@ -56,12 +52,15 @@ function loadedPanel(what){
 	function unloadedPanel(what){
 	console.log("unloaded "+what.id);
 	}
+
 if(!((window.DocumentTouch&&document instanceof DocumentTouch)||'ontouchstart' in window)){
-var script=document.createElement("script");
-script.src="touch.js";
-var tag=$("head").append(script);
-$.os.android=true; //let's make it run like an android device
-$.os.desktop=true;
+	var script=document.createElement("script");
+	script.src="plugins/jq.desktopBrowsers.js";
+	var tag=$("head").append(script);
+	if(!$.os.ie){
+	//	$.os.desktop=true;
+	//	$.feat.nativeTouchScroll=true;
+	}
 }
 var oldElem="default";
 function setActiveStyleSheet(title) {
@@ -90,44 +89,31 @@ $(document).ready(function(){
 oldElem=document.getElementsByTagName("link")[0];
 });
 
+
 </script>
 
-
+<script type="text/javascript" charset="utf-8" src="./plugins/jq.debug.js"></script> 
 <script type="text/javascript" charset="utf-8" src="./plugins/jq.swipe.js"></script> 
-<script type="text/javascript" charset="utf-8" src="./plugins/jq.template.js"></script> 
 <script type="text/javascript" charset="utf-8" src="./plugins/jq.carousel.js"></script> 
-<script type="text/javascript" charset="utf-8" src="./plugins/jq.css3animate.js"></script> 
 <script type="text/javascript" charset="utf-8" src="./plugins/jq.drawer.js"></script> 
-<script type="text/javascript" charset="utf-8" src="./plugins/jq.passwordBox.js"></script> 
-<script type="text/javascript" charset="utf-8" src="./plugins/jq.scroller.js"></script> 
 <script type="text/javascript" charset="utf-8" src="./plugins/jq.shake.js"></script> 
-<script type="text/javascript" charset="utf-8" src="./plugins/jq.selectBox.js"></script> 
 <script type="text/javascript" charset="utf-8" src="./plugins/jq.alphatable.js"></script> 
-<script type="text/javascript" charset="utf-8" src="./plugins/jq.actionsheet.js"></script> 
-<script type="text/javascript" charset="utf-8" src="./plugins/jq.popup.js"></script> 
+<script type="text/javascript" charset="utf-8" src="./plugins/jq.template.js"></script> 
 <script type="text/javascript" charset="utf-8" src="./ui/jq.ui.js"></script> 
-
 
 <script type="text/javascript">
     /* This function runs once the page is loaded, but appMobi is not yet active */
 	var webRoot="./kitchensink/";
 	$.ui.autoLaunch=false;
+    $.ui.openLinksNewTab=false;
+    $.ui.resetScrollers=false;
     var init = function(){
 	   $.ui.backButtonText="Back";  
 	   window.setTimeout(function(){$.ui.launch();},1500);
        //$.ui.removeFooterMenu(); This would remove the bottom nav menu
     };
     document.addEventListener("DOMContentLoaded",init,false);  
-	$.ui.ready(function(){console.log('ready');});
-   
-    /* This code prevents users from dragging the page */
-    var preventDefaultScroll = function(event) {
-        event.preventDefault();
-        window.scroll(0,0);
-        return false;
-    };
-	
-	document.addEventListener('touchmove', preventDefaultScroll, false);
+	$.ui.ready(function(){});
 
     /* This code is used to run as soon as appMobi activates */
     var onDeviceReady=function(){
@@ -136,6 +122,7 @@ oldElem=document.getElementsByTagName("link")[0];
 		webRoot=AppMobi.webRoot+"kitchensink/";
 	    //hide splash screen
 	    AppMobi.device.hideSplashScreen();	
+	    $.ui.blockPageScroll(); //block the page from scrolling at the header/footer
 		
     };
     document.addEventListener("appMobi.device.ready",onDeviceReady,false);    
@@ -164,29 +151,29 @@ oldElem=document.getElementsByTagName("link")[0];
         <span class='ui-icon ui-icon-loading spin'></span><h1 >Starting app</h1>
     </div>
     <div id="header">
-        <img id='badgephone' onclick='jq.ui.toggleSideMenu()' align="right" src='kitchensink/images/badge.png' style='padding-top:7px;padding-right:5px;'>
-        <img id='badgetablet' align="right" src='kitchensink/images/badge.png' style='padding-top:7px;padding-right:5px;'>
+        <a id='menubadge' onclick='jq.ui.toggleSideMenu()' style='float:right;margin-top:0px' class='menuButton'></a>
     </div>
 
 <div id="content">
-	<div title='Welcome' id="main" class="panel" selected="true" data-load="loadedPanel" data-unload="unloadedPanel" data-tab="navbar_home" >
-
+	<div title='Welcome' id="main" class="panel" selected="true" data-load="loadedPanel" data-unload="unloadedPanel" data-tab="navbar_home">
 	<h2 class='expanded' onclick='showHide(this,"main_info");'>Welcome</h2>
 		<p id='main_info'>Welcome to the kitchen sink demo for jqMobi.  Here you will find samples of how to use the jqMobi libraries.  Please select an option from below.</p>
 		<ul>
 		 <li class='icon home big'><a href="#jqm" id='jqmlink'>jqMobi</a></li>
 		 <li><a href="#jqmui" >jqUi</a></li>
 		 <li><a href="#jqmweb" >jqPlugins</a></li>
-		</ul>
+		</ul> 
 	</div> 
 
-	<!-- ------------------------------------------ -->
+	<!---------------------------------------------->
 	
-	<div title="jqMobi" id="jqm" class="panel" data-nav="menu_jqmobi" >
+	<div title="jqMobi" id="jqm" class="panel" data-nav="menu_jqmobi" data-header="testheader">
+       <!-- <header><span>This is an inline header in a panel.  Below is an inline footer</span></header>-->
 		<h2 class='expanded' onclick='showHide(this,"jqmobi_info");'>jqMobi</h2>
 		<p id='jqmobi_info'>jqMobi is a blazingly fast query selector tool that is optmimized for HTML5 browsers.</p>
 
 		<ul>
+			<li><a href="javascript:;" onClick="$.ui.scrollToBottom('jqm')" >Go To Bottom</a></li>
 		<li><a href="#jqm1" >$ Selector</a></li>
 		<li><a href="#jqm2" >$().length()</a></li>
 		<li><a href="#jqm3" >$().find()</a></li>
@@ -226,6 +213,9 @@ oldElem=document.getElementsByTagName("link")[0];
 		<li><a href="javascript:;" onClick="$.ui.scrollToTop('jqm')" >Go To Top</a></li>
 		</ul>
 		<br/><br/>
+         <footer >
+            <a href="#main" id='navbar_home' class='icon home' >Home <span class='jq-badge lr'>12</span></a>
+         </footer>
 	</div>
 
     <div id="jqmserialize" class="panel" title="$().serialize" data-nav="menu_jqmobi" >
@@ -627,23 +617,24 @@ oldElem=document.getElementsByTagName("link")[0];
 	<!-- jqUi -->
 	<div title="jqUi" id="jqmui" class="panel"  data-footer='footerui' data-tab="navbar_ui">
 
-
-	<h2 class='expanded' onclick='showHide(this,"jqui_info");'>jqUi</h2><p id='jqui_info'>jqUi is AppMobi's User Interface/User Experience library for mobile applications. It uses HTML5 and CSS3 for animations and transitions.<br />
+		
+	<h2 class='expanded' onclick='showHide(this,"jqui_info");'>jqUi</h2><p id='jqui_info'>
+		jqUi is AppMobi's User Interface/User Experience library for mobile applications. It uses HTML5 and CSS3 for animations and transitions. 
 	We built the kitchen sink using jqUi.  It is comprised of components from the jqPlugins library and additional features.
 	<br>
 		* Fixed navigation bar<br>
 		* Auto scrolling content panels<br>
 		* Optional footer to segment your application<br>
 		</p>
-		<ul>
+		<ul >
 		<li><a href="#jqmtransitions" >Transitions</a></li>
 		<li><a href="#jqmforms" >Form Styles</a></li>
 		<li><a href="#uiapi" >$.ui API</a></li>
 		<li><a href="#uifooter">Custom Footers</a></li>
 		<li><a href="#uiside">Side Navigation Menu</a></li>
         <li><a href="#uiicons">SVG Icons</a></li>
-		<li><a href="kitchensink/external.html" data-persist-ajax="true" data-refresh-ajax="true">Load External Content</a></li>
-        <li><a href="http://www.jqmobi.com" target="_blank">Open a new page</a></li>
+		<li><a href="kitchensink/external.html" data-persist-ajax="true" data-refresh-ajax="true" data-pull-scroller="true">Load External Content</a></li>
+        <li><a href="http://www.jqmobi.com" target="_blank" >Open a new page</a></li>
         <li><a href="#uidefer">Defer loading</a></li>
 		</ul>
 
@@ -735,98 +726,193 @@ oldElem=document.getElementsByTagName("link")[0];
 	
 	</div>
 	<div id="jqmforms" title="Form Styles" class="panel" data-footer='footerui'>
-	<form>
+		<form>
+	    <fieldset>
+	        <legend>Field elements</legend>
+	        <label for="name">Full Name</label>
+	        <br/>
+	        <input type="text" id="name" class='jq-ui-forms' />
+	        <br/>
+	        <label for="email">E-mail</label>
+	        <br/>
+	        <input type="text" id="email" class='jq-ui-forms' />
+	        <br/>
+	        <label for="password">Password</label>
+	        <br/>	<span><input type="password" id="password" class='jq-ui-forms' /></span>
+	        <br/>
+	        <!-- span is needed for android password fix -->
+	        <label for="country">Country</label>
+	        <br/>	<span><!-- span is needed for android select box fix -->
+					<select id="country" class='jq-ui-forms'>
+						<option value='1'>USA 1</option>
+						<option value='2'>USA 2</option>
+						<option value='3'>USA 3</option>
+						<option value='4'>USA 4</option>
+						<option value='5'>USA 5</option>
+						<option value='6'>USA 6</option>
+						<option value='7'>USA 7</option>
+						<option value='8'>USA 8</option>
+						<option value='9'>USA 9</option>
+						<option value='10'>USA 10</option>
+						</select>
+					</span> 
+	        <br/>
+	        <br/>
+	        <label for="web">Comments</label>
+	        <textarea name="web" class='jq-ui-forms'></textarea>
+	        <br/>
+	    </fieldset>
+	    <fieldset>
+	        <legend>Radios and checkboxes</legend>
+	        	<h4>Gender:</h4>
 
-			<fieldset>
-				<legend>Field elements</legend>
-				
-				<label for="name">Full Name</label><br/>
-				<input type="text" id="name" class='jq-ui-forms'/><br/>
-		
-				<label for="email">E-mail</label><br/>
-				<input type="text" id="email" class='jq-ui-forms' /><br/>
-		
-				<label for="password">Password</label><br/>
-				<span><input type="password" id="password" class='jq-ui-forms' /></span><br/> <!-- span is needed for android password fix -->
-		
-					<label for="country">Country</label><br/>
-					<span><!-- span is needed for android select box fix -->
-				<select id="country" class='jq-ui-forms'>
-					<option value='1'>USA 1</option>
-					<option value='2'>USA 2</option>
-					<option value='3'>USA 3</option>
-					<option value='4'>USA 4</option>
-					<option value='5'>USA 5</option>
-					<option value='6'>USA 6</option>
-					<option value='7'>USA 7</option>
-					<option value='8'>USA 8</option>
-					<option value='9'>USA 9</option>
-					<option value='10'>USA 10</option>
-					</select>
-				</span> <br/>
+	        <br>
+	        <p>
+	            <input type="radio" value="male" id="male" name="gender" class="jq-ui-forms"
+	            />
+	            <label for="male">Male</label>
+	        </p>
+	        <p>
+	            <input type="radio" value="Female" id="female" name="gender" class="jq-ui-forms"
+	            />
+	            <label for="female">Female</label>
+	        </p>
+	        	<h4>Stuff you like:</h4>
 
-		
-	<br/>
-				<label for="web">Comments</label>
-				<textarea name="web" class='jq-ui-forms'></textarea><br/>
-				
-			</fieldset>
-		
-			<fieldset>
-				<legend>Radios and checkboxes</legend>
-				
-				<h4>Gender:</h4>
-				<br>
-				<p><input type="radio" value="male" id="male" name="gender" class="jq-ui-forms"/> <label for="male">Male</label></p>
-				<p><input type="radio" value="Female" id="female" name="gender" class="jq-ui-forms" /> <label for="female">Female</label></p>
-				
-				<h4>Stuff you like:</h4>
-				<br>
-				<p><input type="checkbox" value="CSS3" id="css3" class="jq-ui-forms" /> <label for="css3">CSS3</label></p>
-				<p><input type="checkbox" value="HTML5" id="html5" class="jq-ui-forms" /> <label for="html5">HTML5</label></p>
-				<p><input type="checkbox" value="JavaScript" id="javascript" class="jq-ui-forms" /> <label for="javascript">JavaScript</label></p>
-				<p><input type="checkbox" value="Other" id="other" class="jq-ui-forms" /> <label for="other">Other</label></p>
-				
-			</fieldset>
-			
-			<fieldset>
-				<legend>Disabled and pre-selected</legend>
-				
-				<h4>Disabling and checking radio inputs:</h4>
-				<br>
-				<p><input type="radio" value="disabled" id="disabled" name="disabled" disabled class="jq-ui-forms"/> <label for="disabled">This is disabled</label></p>
-				<p><input type="radio" value="check" id="check" name="check" checked class="jq-ui-forms" /> <label for="check">This is checked</label></p>
-				
-				<h4>Disabling and checking checkbox inputs:</h4>
-				<br>
-				<p><input type="checkbox" value="disabled" id="disabled2" disabled class="jq-ui-forms"/> <label for="disabled2">This is disabled</label></p>
-				<p><input type="checkbox" value="check" id="check2" checked class="jq-ui-forms" /> <label for="check2">This is checked</label></p>
-				<p><input type="checkbox" value="Stop" id="disablecheck" disabled checked class="jq-ui-forms"/> <label for="disablecheck">This is checked and disabled</label></p>
-				<p><input type="checkbox" value="Other" id="other2" class="jq-ui-forms"/> <label for="other2">Other</label></p>
-				
-				
-				
-			</fieldset>
-			
-			<fieldset>
-				<legend>Sliders</legend>
-				
-				<h4>Gender:</h4>
-				<p><input type="radio" value="maleslider" id="slidermale" name="gender" class="jq-ui-slider"/> <label  for="slidermale">Male</label></p>
-				<p><input type="radio" value="femaleslider" id="sliderfemale" name="gender" class="jq-ui-slider" /> <label for="sliderfemale">Female</label></p>
-				
-				<h4>Stuff you like:</h4>
-				<p><input type="checkbox" value="CSS3" id="css3slider" class="jq-ui-slider" /> <label for="css3slider">CSS3</label></p>
-				<p><input type="checkbox" value="HTML5" id="html5slider" class="jq-ui-slider"/> <label for="html5slider">HTML5</label></p>
-				<p><input type="checkbox" value="JavaScript" id="javascriptslider" class="jq-ui-slider"/> <label for="javascriptslider">JavaScript</label></p>
-				<p><input type="checkbox" value="Other" id="otherslider" class="jq-ui-slider"/> <label for="otherslider">Other</label></p>
-				<p><input type="checkbox" value="Other" id="otherd" class="jq-ui-slider" disabled /> <label for="otherd">Disabled</label></p>
-				<p><input type="checkbox" value="Other" id="otherdc" class="jq-ui-slider" disabled checked /> <label for="otherdc">Disabled</label></p>
-				
-			</fieldset>
-			
-		</form>
-		<br><br><br>
+	        <br>
+	        <p>
+	            <input type="checkbox" value="CSS3" id="css3" class="jq-ui-forms" />
+	            <label for="css3">CSS3</label>
+	        </p>
+	        <p>
+	            <input type="checkbox" value="HTML5" id="html5" class="jq-ui-forms" />
+	            <label for="html5">HTML5</label>
+	        </p>
+	        <p>
+	            <input type="checkbox" value="JavaScript" id="javascript" class="jq-ui-forms"
+	            />
+	            <label for="javascript">JavaScript</label>
+	        </p>
+	        <p>
+	            <input type="checkbox" value="Other" id="other" class="jq-ui-forms" />
+	            <label for="other">Other</label>
+	        </p>
+	    </fieldset>
+	    <fieldset>
+	        <legend>Disabled and pre-selected</legend>
+	        	<h4>Disabling and checking radio inputs:</h4>
+
+	        <br>
+	        <p>
+	            <input type="radio" value="disabled" id="disabled" name="disabled" disabled
+	            class="jq-ui-forms" />
+	            <label for="disabled">This is disabled</label>
+	        </p>
+	        <p>
+	            <input type="radio" value="check" id="check" name="check" checked class="jq-ui-forms"
+	            />
+	            <label for="check">This is checked</label>
+	        </p>
+	        	<h4>Disabling and checking checkbox inputs:</h4>
+
+	        <br>
+	        <p>
+	            <input type="checkbox" value="disabled" id="disabled2" disabled class="jq-ui-forms"
+	            />
+	            <label for="disabled2">This is disabled</label>
+	        </p>
+	        <p>
+	            <input type="checkbox" value="check" id="check2" checked class="jq-ui-forms"
+	            />
+	            <label for="check2">This is checked</label>
+	        </p>
+	        <p>
+	            <input type="checkbox" value="Stop" id="disablecheck" disabled checked
+	            class="jq-ui-forms" />
+	            <label for="disablecheck">This is checked and disabled</label>
+	        </p>
+	        <p>
+	            <input type="checkbox" value="Other" id="other2" class="jq-ui-forms" />
+	            <label for="other2">Other</label>
+	        </p>
+	    </fieldset>
+	    <fieldset>
+	        <legend>Sliders</legend>
+	        	<h4>Gender:</h4>
+
+	        <p>
+	            <input type="radio" value="maleslider" id="slidermale" name="gender" class="jq-ui-slider"
+	            />
+	            <label for="slidermale">Male</label>
+	        </p>
+	        <p>
+	            <input type="radio" value="femaleslider" id="sliderfemale" name="gender"
+	            class="jq-ui-slider" />
+	            <label for="sliderfemale">Female</label>
+	        </p>
+	        	<h4>Stuff you like:</h4>
+
+	        <p>
+	            <input type="checkbox" value="CSS3" id="css3slider" class="jq-ui-slider"
+	            />
+	            <label for="css3slider">CSS3</label>
+	        </p>
+	        <p>
+	            <input type="checkbox" value="HTML5" id="html5slider" class="jq-ui-slider"
+	            />
+	            <label for="html5slider">HTML5</label>
+	        </p>
+	        <p>
+	            <input type="checkbox" value="JavaScript" id="javascriptslider" class="jq-ui-slider"
+	            />
+	            <label for="javascriptslider">JavaScript</label>
+	        </p>
+	        <p>
+	            <input type="checkbox" value="Other" id="otherslider" class="jq-ui-slider"
+	            />
+	            <label for="otherslider">Other</label>
+	        </p>
+	        <p>
+	            <input type="checkbox" value="Other" id="otherd" class="jq-ui-slider"
+	            disabled />
+	            <label for="otherd">Disabled</label>
+	        </p>
+	        <p>
+	            <input type="checkbox" value="Other" id="otherdc" class="jq-ui-slider"
+	            disabled checked />
+	            <label for="otherdc">Disabled</label>
+	        </p>
+	    </fieldset>
+	    <fieldset>
+	        <legend>HTML5 input</legend>
+	        <label for="date">Date</label>
+	        <br/>
+	        <input type="date" id="date" class='jq-ui-forms' />
+	        <br/>
+	        <label for="month">Month</label>
+	        <br/>
+	        <input type="month" id="month" class='jq-ui-forms' />
+	        <br/>
+	        <label for="datetime">Date/Time</label>
+	        <br/>
+	        <input type="datetime" id="datetime" class='jq-ui-forms' />
+	        <br/>
+	        <label for="datetime-local">Date/Time Local</label>
+	        <br/>
+	        <input type="datetime-local" id="datetime-local" class='jq-ui-forms' />
+	        <br/>
+	        <label for="time">Time</label>
+	        <br/>
+	        <input type="time" id="time" class='jq-ui-forms' />
+	        <br/>
+	        <label for="range">Range</label>
+	        <br/>
+	        <input type="range" id="range" class='jq-ui-forms' />
+	        <br/>
+	</form>
+	<br>
+	<br>
+	<br>
 
 	</div>
 
@@ -850,7 +936,7 @@ oldElem=document.getElementsByTagName("link")[0];
 		<li><a href="#uigoback">.goBack()</a></li>
 		<li><a href="#uiclearhistory">.clearHistory()</a></li>
 		<li><a href="#uiaddcontentdiv">.addContentDiv ()</a></li>
-		<li><a href="#uiupdateanchors">.updateAnchors() </a></li>
+		
 		<li><a href="#uisettitle">.setTitle(text) </a></li>
 		<li><a href="#uisetbackbutton">.setBackButtonText() </a></li>
 		<li><a href="#uishowmask">.showMask() </a></li>
@@ -866,6 +952,7 @@ oldElem=document.getElementsByTagName("link")[0];
         <li><a href="#uiactionsheet">.actionsheet() </a></li>
         
 		<li><a href="#uiscrolltotop">.scrollToTop() </a></li>
+		<li><a href="#uiscrolltobottom">.scrollToBottom() </a></li>
 
 	</ul>
 	</div>
@@ -957,13 +1044,7 @@ oldElem=document.getElementsByTagName("link")[0];
 
 
 	</div>
-	<div id="uiupdateanchors" title="Update Anchors" class="panel" data-footer='footerui'>
-	This will loop through content and parse any anchors to automagically wire them.<br>
-	<pre>
-	$.ui.updateAnchors(div,resetHistory)
-	</pre>
-	</div>
-
+	
 	<div id="uisettitle" title="Set Title" class="panel" data-footer='footerui'>
 	This will set the page title of the current page programatically.  It will not be retained.
 	<pre>
@@ -1064,6 +1145,19 @@ oldElem=document.getElementsByTagName("link")[0];
 	<br/><br/>
 	</div>
 
+	<div id="uiscrolltobottom" title="Scroll to Bottom" class="panel" data-footer='footerui'>
+	This allows you to scroll to the top of a page.  Scroll to the bottom for the link.
+	<pre>
+	$.ui.scrollToTop(div_id)
+	</pre>
+	<a href="javascript:;" onclick="$.ui.scrollToBottom('uiscrolltobottom')" class="button">Scroll to Bottom</a>
+	<br><br>
+	Keep scrolling down.<br><br><br><br>Keep scrolling down.<br><br><br><br>Keep scrolling down.<br><br><br><br>Keep scrolling down.<br><br><br><br>Keep scrolling down.<br><br><br><br>Keep scrolling down.<br><br><br><br>Keep scrolling down.<br><br><br><br>Keep scrolling down.<br><br><br><br>Keep scrolling down.<br><br><br><br>Keep scrolling down.<br><br><br><br>Keep scrolling down.<br><br><br><br>
+
+	
+	<br/><br/>
+	</div>
+
 	<!-- jqUi > API -->
 
 	<!-- jqUi > Transitions -->
@@ -1076,13 +1170,13 @@ oldElem=document.getElementsByTagName("link")[0];
 	<div title="Modal" id="transition7" class="panel splashscreen" data-modal="true" data-footer='footerui' >I'm a modal window...woot woot
 	<br><br><br>
 	Check the input box out below.  <br>
-	<input type="text" class="jq-ui-forms">
+	<input type="text" class="jq-ui-forms" id="modal_test">
 	</div>
 	<!-- ------------------------------------------ -->
 
 	<!-- ------------------------------------------ -->
 	<!-- jqPlugins -->
-	<div title="jqPlugins" id="jqmweb" class="panel">
+	<div title="jqPlugins" id="jqmweb" class="panel" data-header="testheader">
 	<h2 class='expanded' onclick='showHide(this,"jqweb_info");'>jqPlugins</h2><p id='jqweb_info'>
 		This is our plugin library of widgets to assist you with developing mobile applications.  Some of these are used in jqUi.</p>
 		<ul>
@@ -1102,347 +1196,387 @@ oldElem=document.getElementsByTagName("link")[0];
 	</div>
 
 	<!-- jqPlugins > jQ.scroller -->
-	<div title="Scroller" class="panel" id="webslider" scrolling="no">
+	<div title="Scroller" class="panel" id="webslider">
 	<script>
-		var init_scroller = function () {
-		   $("#scroller").scroller({
-				scrollBars: true,
-				verticalScroll: true,
-				horizontalScroll: false,
-				vScrollCSS: "jqmScrollbar",
-				hScrollCSS: "jqmScrollbar"
-			});
-		};
-		window.addEventListener("load", init_scroller, false);
+	var myScroller;
+	$.ui.ready(function(){
+		   myScroller=$("#webslider").scroller();//Fetch the scroller from cache
+		   //Since this is a jqUi scroller, we could also do
+		   // myScroller=$.ui.scrollingDivs['webslider'];
+		   myScroller.addInfinite();
+		   myScroller.addPullToRefresh();
+		  $.bind($.touchLayer, 'scrollend',function()
+		{
+			console.log("scroll end");
+		}); 
+
+		$.bind(myScroller, 'scrollstart',function()
+		{
+		console.log("scroll start");
+		}); 
+		   $.bind(myScroller,"refresh-trigger",function(){
+				this.setRefreshContent("New content");
+		   });
+		   var hideClose;
+		   $.bind(myScroller,"refresh-release",function(){
+		   		var that=this;
+		   		this.setRefreshContent("New content...");
+		   		clearTimeout(hideClose);
+				hideClose=setTimeout(function(){
+					console.log("hiding manually refresh");
+					that.hideRefresh();
+				},5000);
+		   		return false; //tells it to not auto-cancel the refresh
+		   });
+
+		    $.bind(myScroller,"refresh-cancel",function(){
+		    	clearTimeout(hideClose);
+		    	console.log("cancelled");
+		    });
+		   	myScroller.enable();
+		   	
+		    $.bind(myScroller,"infinite-scroll",function(){
+		    	var self=this;
+		    	console.log("infinite triggered");
+				$(this.el).append("<div id='infinite' style='border:2px solid black;margin-top:10px;width:100%;height:20px'>Fetching content...</div>");
+				$.bind(myScroller,"infinite-scroll-end",function(){
+		    		myScroller.scrollToBottom();
+		    		$.unbind(myScroller,"infinite-scroll-end");
+		    		setTimeout(function(){
+		    			$(self.el).find("#infinite").remove();
+		    			self.clearInfinite();
+		    		},3000);
+		    	});
+		   });
+		    $("#webslider").css("overflow","auto");
+	});
 	</script>
-	<div id="outercontent"
-			style="height: 95%; width:95%; overflow: hidden; position: relative">
+
+	<div>
+				Lorem ipsum dolor sit amet, consectetur
+				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
+				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
+				sed convallis elementum, magna diam pharetra magna, id vestibulum est
+				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
+				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
+				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
+				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
+				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
+				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
+				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
+				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
+				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
+				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
+				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
+				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
+				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
+				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
+				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
+				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
+				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
+				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
+				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
+				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
+				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
+				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
+				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
+				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
+				felis</div>
+				<div>Lorem ipsum dolor sit amet, consectetur
+				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
+				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
+				sed convallis elementum, magna diam pharetra magna, id vestibulum est
+				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
+				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
+				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
+				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
+				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
+				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
+				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
+				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
+				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
+				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
+				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
+				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
+				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
+				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
+				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
+				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
+				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
+				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
+				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
+				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
+				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
+				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
+				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
+				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
+				felis</div>
+				<div>Lorem ipsum dolor sit amet, consectetur
+				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
+				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
+				sed convallis elementum, magna diam pharetra magna, id vestibulum est
+				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
+				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
+				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
+				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
+				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
+				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
+				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
+				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
+				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
+				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
+				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
+				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
+				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
+				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
+				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
+				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
+				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
+				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
+				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
+				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
+				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
+				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
+				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
+				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
+				felis</div>
+				<div>Lorem ipsum dolor sit amet, consectetur
+				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
+				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
+				sed convallis elementum, magna diam pharetra magna, id vestibulum est
+				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
+				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
+				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
+				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
+				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
+				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
+				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
+				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
+				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
+				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
+				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
+				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
+				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
+				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
+				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
+				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
+				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
+				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
+				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
+				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
+				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
+				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
+				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
+				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
+				felis</div>
+				<div>Lorem ipsum dolor sit amet, consectetur
+				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
+				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
+				sed convallis elementum, magna diam pharetra magna, id vestibulum est
+				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
+				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
+				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
+				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
+				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
+				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
+				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
+				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
+				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
+				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
+				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
+				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
+				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
+				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
+				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
+				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
+				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
+				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
+				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
+				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
+				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
+				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
+				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
+				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
+				felis</div>
+				<div>Lorem ipsum dolor sit amet, consectetur
+				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
+				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
+				sed convallis elementum, magna diam pharetra magna, id vestibulum est
+				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
+				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
+				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
+				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
+				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
+				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
+				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
+				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
+				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
+				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
+				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
+				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
+				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
+				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
+				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
+				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
+				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
+				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
+				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
+				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
+				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
+				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
+				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
+				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
+				felis</div>
+				<div>Lorem ipsum dolor sit amet, consectetur
+				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
+				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
+				sed convallis elementum, magna diam pharetra magna, id vestibulum est
+				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
+				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
+				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
+				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
+				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
+				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
+				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
+				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
+				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
+				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
+				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
+				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
+				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
+				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
+				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
+				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
+				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
+				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
+				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
+				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
+				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
+				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
+				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
+				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
+				felis</div>
+				<div>Lorem ipsum dolor sit amet, consectetur
+				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
+				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
+				sed convallis elementum, magna diam pharetra magna, id vestibulum est
+				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
+				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
+				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
+				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
+				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
+				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
+				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
+				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
+				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
+				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
+				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
+				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
+				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
+				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
+				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
+				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
+				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
+				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
+				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
+				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
+				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
+				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
+				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
+				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
+				felis</div>
+				<div>Lorem ipsum dolor sit amet, consectetur
+				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
+				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
+				sed convallis elementum, magna diam pharetra magna, id vestibulum est
+				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
+				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
+				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
+				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
+				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
+				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
+				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
+				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
+				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
+				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
+				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
+				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
+				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
+				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
+				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
+				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
+				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
+				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
+				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
+				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
+				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
+				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
+				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
+				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
+				felis</div>
+				<div>Lorem ipsum dolor sit amet, consectetur
+				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
+				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
+				sed convallis elementum, magna diam pharetra magna, id vestibulum est
+				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
+				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
+				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
+				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
+				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
+				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
+				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
+				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
+				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
+				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
+				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
+				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
+				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
+				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
+				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
+				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
+				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
+				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
+				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
+				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
+				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
+				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
+				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
+				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
+				felis</div>
+				<div>Lorem ipsum dolor sit amet, consectetur
+				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
+				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
+				sed convallis elementum, magna diam pharetra magna, id vestibulum est
+				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
+				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
+				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
+				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
+				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
+				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
+				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
+				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
+				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
+				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
+				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
+				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
+				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
+				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
+				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
+				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
+				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
+				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
+				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
+				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
+				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
+				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
+				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
+				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
+				felis</div>
 			
-			<div id="scroller"><div>Lorem ipsum dolor sit amet, consectetur
-				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
-				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
-				sed convallis elementum, magna diam pharetra magna, id vestibulum est
-				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
-				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
-				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
-				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
-				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
-				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
-				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
-				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
-				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
-				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
-				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
-				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
-				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
-				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
-				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
-				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
-				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
-				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
-				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
-				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
-				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
-				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
-				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
-				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
-				felis</div>
-				<div>Lorem ipsum dolor sit amet, consectetur
-				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
-				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
-				sed convallis elementum, magna diam pharetra magna, id vestibulum est
-				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
-				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
-				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
-				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
-				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
-				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
-				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
-				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
-				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
-				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
-				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
-				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
-				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
-				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
-				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
-				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
-				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
-				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
-				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
-				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
-				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
-				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
-				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
-				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
-				felis</div>
-				<div>Lorem ipsum dolor sit amet, consectetur
-				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
-				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
-				sed convallis elementum, magna diam pharetra magna, id vestibulum est
-				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
-				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
-				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
-				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
-				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
-				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
-				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
-				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
-				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
-				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
-				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
-				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
-				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
-				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
-				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
-				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
-				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
-				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
-				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
-				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
-				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
-				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
-				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
-				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
-				felis</div>
-				<div>Lorem ipsum dolor sit amet, consectetur
-				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
-				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
-				sed convallis elementum, magna diam pharetra magna, id vestibulum est
-				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
-				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
-				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
-				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
-				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
-				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
-				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
-				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
-				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
-				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
-				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
-				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
-				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
-				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
-				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
-				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
-				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
-				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
-				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
-				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
-				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
-				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
-				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
-				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
-				felis</div>
-				<div>Lorem ipsum dolor sit amet, consectetur
-				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
-				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
-				sed convallis elementum, magna diam pharetra magna, id vestibulum est
-				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
-				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
-				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
-				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
-				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
-				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
-				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
-				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
-				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
-				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
-				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
-				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
-				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
-				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
-				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
-				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
-				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
-				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
-				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
-				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
-				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
-				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
-				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
-				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
-				felis</div>
-				<div>Lorem ipsum dolor sit amet, consectetur
-				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
-				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
-				sed convallis elementum, magna diam pharetra magna, id vestibulum est
-				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
-				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
-				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
-				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
-				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
-				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
-				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
-				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
-				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
-				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
-				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
-				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
-				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
-				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
-				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
-				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
-				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
-				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
-				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
-				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
-				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
-				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
-				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
-				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
-				felis</div>
-				<div>Lorem ipsum dolor sit amet, consectetur
-				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
-				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
-				sed convallis elementum, magna diam pharetra magna, id vestibulum est
-				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
-				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
-				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
-				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
-				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
-				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
-				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
-				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
-				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
-				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
-				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
-				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
-				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
-				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
-				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
-				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
-				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
-				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
-				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
-				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
-				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
-				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
-				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
-				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
-				felis</div>
-				<div>Lorem ipsum dolor sit amet, consectetur
-				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
-				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
-				sed convallis elementum, magna diam pharetra magna, id vestibulum est
-				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
-				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
-				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
-				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
-				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
-				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
-				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
-				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
-				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
-				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
-				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
-				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
-				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
-				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
-				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
-				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
-				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
-				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
-				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
-				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
-				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
-				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
-				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
-				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
-				felis</div>
-				<div>Lorem ipsum dolor sit amet, consectetur
-				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
-				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
-				sed convallis elementum, magna diam pharetra magna, id vestibulum est
-				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
-				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
-				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
-				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
-				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
-				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
-				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
-				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
-				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
-				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
-				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
-				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
-				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
-				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
-				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
-				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
-				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
-				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
-				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
-				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
-				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
-				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
-				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
-				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
-				felis</div>
-				<div>Lorem ipsum dolor sit amet, consectetur
-				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
-				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
-				sed convallis elementum, magna diam pharetra magna, id vestibulum est
-				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
-				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
-				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
-				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
-				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
-				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
-				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
-				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
-				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
-				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
-				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
-				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
-				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
-				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
-				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
-				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
-				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
-				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
-				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
-				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
-				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
-				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
-				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
-				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
-				felis</div>
-				<div>Lorem ipsum dolor sit amet, consectetur
-				adipiscing elit. Duis porta, lorem sit amet feugiat lacinia, mi dui
-				sodales eros, id lacinia mauris urna eu est. Proin pulvinar, augue
-				sed convallis elementum, magna diam pharetra magna, id vestibulum est
-				eros vitae ante. Ut auctor erat a tellus venenatis eu fermentum lorem
-				scelerisque. Cras dignissim leo ornare massa sollicitudin sit amet
-				pulvinar turpis hendrerit. Morbi hendrerit nunc eget turpis luctus id
-				ultricies lorem consequat. Donec eu lacus sed mauris sollicitudin
-				laoreet. Cras vitae sodales diam. Donec mollis, libero ut
-				pellentesque dignissim, risus orci ornare nisi, sed eleifend enim
-				purus malesuada neque. Nulla tellus sem, scelerisque sed sagittis id,
-				eleifend venenatis ligula. Vivamus placerat neque sit amet metus
-				ultricies facilisis. Nulla a odio magna. Pellentesque habitant morbi
-				tristique senectus et netus et malesuada fames ac turpis egestas. Sed
-				commodo quam eu enim lacinia vitae ultrices nulla mollis. Aenean eget
-				lectus turpis, at ultrices leo. Nulla vehicula magna in risus ornare
-				vestibulum. Integer gravida magna quam. Donec augue ante, fringilla
-				non congue eu, aliquam lacinia nisi. Class aptent taciti sociosqu ad
-				litora torquent per conubia nostra, per inceptos himenaeos. Maecenas
-				nisl ante, suscipit ut suscipit nec, dictum sit amet orci. Maecenas
-				fermentum sapien turpis, sit amet eleifend justo. Aenean auctor
-				interdum sem sed tincidunt. Aliquam ullamcorper malesuada fermentum.
-				Nunc consectetur, ipsum et pulvinar ultrices, lorem nibh egestas
-				sapien, at egestas lorem metus sit amet lacus. Maecenas non feugiat
-				orci. Curabitur imperdiet tempus lacus, volutpat fermentum diam
-				convallis a. In hac habitasse platea dictumst. Pellentesque nec ipsum
-				diam, at consectetur elit. Duis feugiat ullamcorper libero tincidunt
-				aliquet. Sed leo nisl, iaculis non pellentesque nec, scelerisque vel
-				felis</div></div>
-				
-		</div>
 	</div>
 
 	<!-- jqPlugins > jQ.carousel -->
-	<div title="Carousel" class="panel" id="webcarousel"  scrolling="no">
+	<div title="Carousel" class="panel" id="webcarousel"  style="overflow:hidden;">
 		<style>
 		.carousel_paging2 {
 			border-radius: 10px;
@@ -1516,7 +1650,7 @@ oldElem=document.getElementsByTagName("link")[0];
 	</div>
 
 	<!-- jqPlugins > jQ.swipeListener -->
-	<div title="Swipe" class="panel" id="webswipe" scrolling="no">
+	<div title="Swipe" class="panel" id="webswipe" style="overflow:hidden;">
 		<style>
 			.result {position:absolute;left:100px;}
 		</style>
@@ -1616,6 +1750,22 @@ oldElem=document.getElementsByTagName("link")[0];
 					<option value="73">7Three</option>
 				</select>
 			</span>
+			<br><br><br>
+			This is a multi select box test<br>
+			<span>
+				<select id="test4" multiple="multiple">
+					<option value="1">One</option>
+					<option value="2">Two</option>
+					<option value="3">Three</option>
+					<option value="11">1One</option>
+					<option value="22">2Two</option>
+					<option value="33">3Three</option>
+					<option value="43">4Three</option>
+					<option value="53">5Three</option>
+					<option value="63">6Three</option>
+					<option value="73">7Three</option>
+				</select>
+			</span>
 		</div>
 		<br/>
 		<br/>
@@ -1656,7 +1806,7 @@ oldElem=document.getElementsByTagName("link")[0];
 	</div>
 
 	<!-- jqPlugins > jQ.css3animate -->
-	<div title="Animate" class="panel" id="webanimate" scrolling="no">
+	<div title="Animate" class="panel" id="webanimate" style="overflow:hidden;">
 		<script>
 			function moveOnce() {
 				$("#animate").css3Animate({
@@ -1722,7 +1872,7 @@ oldElem=document.getElementsByTagName("link")[0];
 	<!-- ------------------------------------------ -->
 
 	<!-- jqPlugins > jQ.drawer -->
-	<div title="Drawer" class="panel" id="webdrawer" scrolling="no">
+	<div title="Drawer" class="panel" id="webdrawer" style="overflow:hidden;">
 	<br><br>
 	<p>a pulldown tool like the notifications bar</p>
 	<div id="drawer" style="position:relative;top:-270px;height:220px;background:black;width:100%;z-index:100">
@@ -1819,7 +1969,7 @@ oldElem=document.getElementsByTagName("link")[0];
 	</div>
     
     <!-- jqPlugins -> jqAlphaTable-->
-    <div title="Alpha Table" class="panel" id="webalphatable" scrolling="no">
+    <div title="Alpha Table" class="panel" id="webalphatable" style="overflow:hidden;">
     <style>
     #contentDIV .alphaItem {padding:5px;}
     #contentDIV .alphaItem:nth-child(even) {background: #CCC}
@@ -1833,7 +1983,7 @@ oldElem=document.getElementsByTagName("link")[0];
 	<p>Scroll an alphabetical list like contacts</p>
 	<div id="listControl" style="margin-left:auto;margin-right:auto;position:absolute;top:20px;bottom:0px;left:0px;overflow:hidden;width:100%;padding-bottom:10px;">
         <div id="contentDIV_container" style="width:100%;height:100%; background-color:white;overflow:hidden;">
-            <div id="contentDIV" style='color:black'>
+            <div id="contentDIV" style='color:black;overflow:hidden;'>
                 <div class="tableHeader" id="itm_anchor_A">A</div> 
                 
                 <li class='alphaItem' id="item1">These are all</li>
@@ -1878,8 +2028,9 @@ oldElem=document.getElementsByTagName("link")[0];
     </div>
 	<script>
 	window.addEventListener("load",function(){
-	$("#contentDIV").scroller({});  
+	$("#contentDIV").scroller({useJsScroll:true});  
 	$("#contentDIV").alphatable($("#contentDIV").scroller(),{listCssClass:"tableListContainer",prefix:"itm_anchor_"});
+	
     },false);
 	</script>
     <style>
@@ -1897,8 +2048,7 @@ oldElem=document.getElementsByTagName("link")[0];
 <!-- ------------------------------------------ -->
 <!-- navbar -->
 <!-- navbar -->
-<div id="navbar">
-	<div class="horzRule"></div>
+<div id="navbar" style='margin: 0;float:left;'>
     <a href="#main" id='navbar_home' class='icon home' >home <span class='jq-badge lr'>3</span></a>
     <a href="#jqm" id='navbar_js' class="icon target" >selectors</a>
     <a href="#jqmui" id='navbar_ui'  class="icon picture" >ui</a>
@@ -1906,7 +2056,6 @@ oldElem=document.getElementsByTagName("link")[0];
 </div>
 
  <footer id='footerui'>
-	 <div class="horzRule"></div>
       <a href="#main" id='navbar_home' class='icon home' >Home <span class='jq-badge lr'>6</span></a>
       <a href="#jqmtransitions" id='navbar_js' class="icon stack" >Trans</a>
 	  <a href="#jqmui" id='navbar_ui'  class="icon picture" >ui</a>
@@ -1914,12 +2063,16 @@ oldElem=document.getElementsByTagName("link")[0];
 	  
 </footer>
  <footer id='footerui2'>
-	 <div class="horzRule"></div>
-  <a href="#main" id='navbar_home' class='icon home' >Home <span class='jq-badge lr'>6</span></a>
+      <a href="#main" id='navbar_home' class='icon home' >Home <span class='jq-badge lr'>6</span></a>
       <a href="#jqmtransitions" id='navbar_js' class="icon stack" >Trans</a>
 	  <a href="#jqmui" id='navbar_ui'  class="icon picture" >ui</a>
 	  <a href="#uiapi" id='navbar_plugins'  class="icon info" >api</a>
 </footer>	
+
+<header id="testheader">
+    <a id="backButton" onclick="$.ui.goBack()" class='button' style='left:0px;left:auto;overflow:hidden'>Go Back</a>
+    <h1>Custom Header</h1>
+</header>
 <!-- ------------------------------------------ -->
 <nav>
    <div class='title'>Home</div>
@@ -1944,15 +2097,7 @@ oldElem=document.getElementsByTagName("link")[0];
 	   <li> <a href="javascript:;" onclick="$.ui.toggleSideMenu()"  >Toggle Side</a></li>
 	   <li> <a href="javascript:;" onclick="$.ui.toggleNavMenu()"  >Toggle Footer</a></li>
 	  </ul>
-      <div class="title">Themes</div>
-      <ul>
-        <li><a href="javascript:;" onclick="setActiveStyleSheet('default')">Default</a></li>
-        <li><a href="javascript:;" onclick="setActiveStyleSheet('carbon')">Carbon</a></li>
-        <li><a href="javascript:;" onclick="setActiveStyleSheet('eco')">Eco</a></li>
-        <li><a href="javascript:;" onclick="setActiveStyleSheet('frosty')">Frosty</a></li>
-        <li><a href="javascript:;" onclick="setActiveStyleSheet('slate')">Slate</a></li>
-        <li><a href="javascript:;" onclick="setActiveStyleSheet('volcano')">Volcano</a></li>
-      </ul>
+	  
 </nav>
 <nav id="menu_jqmobi">
    <div class='title'>Selectors</div>
